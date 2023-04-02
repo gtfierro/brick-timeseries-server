@@ -1,0 +1,34 @@
+services:
+  oxigraph:
+    image: ghcr.io/oxigraph/oxigraph
+    volumes:
+      - rdf-data:/data
+    command: --location /data serve --bind localhost:7878
+    ports:
+      - target: 7878
+        published: 7878
+        protocol: tcp
+        mode: host
+  pg:
+    build:
+      context: ./docker/pg
+    restart: always
+    env_file:
+    - postgres.env
+    volumes:
+      - db-data:/home/postgres/pgdata/data
+    ports:
+      - target: 5432
+        published: 5432
+        protocol: tcp
+        mode: host
+    healthcheck:
+      test: ["CMD", "pg_isready", "-u", "postgres", "-d", "brick"] # TODO: load from env?
+      interval: 30s
+      timeout: 30s
+      retries: 5
+      start_period: 10s
+
+volumes:
+  db-data:
+  rdf-data:
