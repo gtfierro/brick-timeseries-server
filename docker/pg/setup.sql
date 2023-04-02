@@ -1,13 +1,13 @@
-CREATE TABLE testschema(
+CREATE TABLE data(
     time       TIMESTAMPTZ NOT NULL,
     value      DOUBLE PRECISION NOT NULL,
-    sensor_id  INTEGER NOT NULL
+    id  INTEGER NOT NULL
 );
-SELECT create_hypertable('testschema', 'time');
-CREATE INDEX ON testschema(sensor_id, time DESC);
+SELECT create_hypertable('data', 'time');
+CREATE INDEX ON data(id, time DESC);
 
-ALTER TABLE testschema
+ALTER TABLE data
   SET (timescaledb.compress,
       timescaledb.compress_orderby = 'time DESC',
-      timescaledb.compress_segmentby = 'sensor_id');
-SELECT add_compression_policy('testschema', INTERVAL '14 days');
+      timescaledb.compress_segmentby = 'id');
+SELECT add_compression_policy('data', INTERVAL '14 days');
